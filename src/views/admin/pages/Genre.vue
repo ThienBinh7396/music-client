@@ -70,9 +70,6 @@ import {
     mapState,
     mapMutations
 } from 'vuex';
-import {
-    async
-} from 'q';
 export default {
     props: {
         embed: {
@@ -131,7 +128,6 @@ export default {
 
         },
         deleteAccent(str) {
-
             str = str ? str.trim() : '';
 
             str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
@@ -149,14 +145,13 @@ export default {
             str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
             str = str.replace(/Đ/g, "D");
             str = str.replace(/\s+/g, "-");
-            str = str.replace(/[^A-Za-z0-9\-]/gim, '');
+            str = str.replace(/[^A-Za-z0-9\\-]/gim, '');
             return str;
         },
         init: async function () {
-            console.log(this.axiosInstance);
 
             this.genres = (await this.getData()).map(it => {
-                it.createdAt = formatDate(it.createdAt, 3).format
+                it.createdAt = window.formatDate(it.createdAt, 3).format
                 return it;
             });
             this.loading = false;
@@ -165,10 +160,9 @@ export default {
             return new Promise(res => {
                 this.axiosInstance.post('admin/genres/all')
                     .then(rs => {
-                        console.log(rs);
                         res(rs.data.response);
                     })
-                    .catch(err => {
+                    .catch(() => {
                         res([]);
                     })
             })
@@ -189,7 +183,6 @@ export default {
                     id: item.id
                 })
                 .then(rs => {
-                    console.log("Err", item.id);
                     if (rs == 0) {
                         this.showToast({
                             type: 'error',
@@ -207,13 +200,8 @@ export default {
                     }
 
                 })
-                .catch(err => {
-
-                })
         },
         control: function () {
-            console.log(this.tempGenre.title)
-            console.log(this.tempGenre.id)
 
             if (this.tempGenre.title.trim() == '') {
                 this.showToast({
@@ -247,12 +235,12 @@ export default {
                                 text: `Add ${this.tempGenre.title} successful!`
                             })
                             this.cancel();
-                            data.response.createdAt = formatDate(data.response.createdAt, 3).format
+                            data.response.createdAt = window.formatDate(data.response.createdAt, 3).format
                             this.genres.splice(0, 0, data.response);
                         }
 
                     })
-                    .catch(err => {
+                    .catch(() => {
                         this.showToast({
                             type: 'error',
                             text: `Error: Something went wrong}!`
@@ -290,7 +278,7 @@ export default {
                         }
 
                     })
-                    .catch(err => {
+                    .catch(() => {
                         this.showToast({
                             type: 'error',
                             text: `Error: Something went wrong}!`

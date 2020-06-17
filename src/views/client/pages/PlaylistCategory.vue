@@ -174,7 +174,7 @@ export default {
                     this.playlistCategory = data.response;
                     this.loadingPlaylist = false;
                 })
-                .catch(err => {
+                .catch(() => {
                     this.showToast({
                         type: 'error',
                         text: `Url is invalid`
@@ -196,8 +196,6 @@ export default {
                     this.randomPlaylistCategory = data.response.filter(it => it.id != this.playlistCategory.id);
 
                     this.loadingRandomCategory = false;
-                    console.log("rs");
-                    console.log(this.randomPlaylistCategory);
                 })
         },
          playPlaylist: function (item) {

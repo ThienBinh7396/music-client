@@ -31,7 +31,7 @@ export default {
         ...mapState("app", ["responsive"])
     },
     watch: {
-        $route(val) {
+        $route() {
             document.getElementById("main_content").scrollTop = 0;
         }
     },
@@ -40,10 +40,6 @@ export default {
             this.prevHeight = getComputedStyle(element).height;
         },
         enter(element) {
-            const {
-                height
-            } = getComputedStyle(element);
-
             element.style.height = this.prevHeight;
 
             setTimeout(() => {

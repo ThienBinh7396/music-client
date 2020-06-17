@@ -78,11 +78,7 @@
 import {
     mapMutations,
     mapState,
-    mapActions
 } from 'vuex';
-import {
-    async
-} from 'q';
 
 import {
     quillEditor
@@ -165,7 +161,6 @@ export default {
                     })
                 }
 
-                console.log(data);
             } catch (err) {
                 this.showToast({
                     type: 'error',
@@ -251,8 +246,6 @@ export default {
                 return;
             }
 
-            console.log(URL.createObjectURL(e.target.files[0]));
-
             target == 'banner' ?
                 this.bannerFile = e.target.files[0] :
                 this.thumbnailFile = e.target.files[0];
@@ -286,7 +279,7 @@ export default {
 
                     }
 
-                }).catch(err => {
+                }).catch(() => {
                     res(null);
                 })
 
@@ -294,8 +287,6 @@ export default {
         },
 
         add: async function () {
-            console.log(this.information);
-
             if (this.name == "" || this.name.trim() == "") {
                 this.showToast({
                     type: 'error',
@@ -314,7 +305,6 @@ export default {
 
             if (this.bannerTypeFile) {
                 if (!this.bannerFile && this.type == 'add') {
-                    console.log("Add: ");
                     this.showToast({
                         type: 'error',
                         text: 'Choose banner from computer or type url...'
@@ -335,7 +325,6 @@ export default {
                     this.showDialogProcess(false);
                     return;
                 }
-                console.log("Upload banner url: " + this.banner)
 
                 if (await this.checkImage(this.banner) && this.banner != '/img/banner-placeholder.png') {
                     bannerUrl = await this.uploadFile(this.banner);
@@ -388,7 +377,6 @@ export default {
             }
 
             formData.append('name', this.name);
-            console.log(this.information)
             formData.append('information', this.information.replace(`<p data-f-id="pbf" style="text-align: center; font-size: 14px; margin-top: 30px; opacity: 0.65; font-family: sans-serif;">Powered by <a href="https://www.froala.com/wysiwyg-editor?pb=1" title="Froala Editor">Froala Editor</a></p>`, ''));
 
             bannerUrl && formData.append('banner', bannerUrl);
@@ -418,12 +406,9 @@ export default {
                             !this.embed && this.$router.push('/admin/singer');
                     }
 
-                    console.log(rs);
                 })
-                .catch(err => {
+                .catch(() => {
                     this.showDialogProcess(false);
-
-                    console.log(err);
                 })
 
         }

@@ -1,7 +1,6 @@
-import {set, toggle } from '@/utils/vuex'
+import {set } from '@/utils/vuex'
 
 function setMusicByIndex(state, index) {
-    console.log(state);
     if (state.playList.length != 0) {
 
         if (index >= state.playList.length) index = 0;
@@ -34,7 +33,6 @@ function setMusicByIndex(state, index) {
 }
 
 function updatePlaylistInLocalStorage(state) {
-    console.log(state);
     localStorage.setItem('playlist', JSON.stringify(state.playList));
 }
 
@@ -67,7 +65,6 @@ export default {
     setPlaylistId: set('playlistId'),
     setPlayList: (state, playlist) => {
         state.playList = playlist;
-        console.log(playlist);
         updatePlaylistInLocalStorage(state);
     },
     addMusicIntoPlaylist: (state, music) => {
@@ -97,7 +94,6 @@ export default {
         state.playList.splice(index, 1);
 
         if (next) {
-            console.log(state.playList.length == 0)
             setMusicByIndex(state, index);
             state.replay = true;
         }

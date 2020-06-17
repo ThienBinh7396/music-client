@@ -6,6 +6,7 @@
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
+        "test": "npm run lint",
         "start": "node server.js"
     },
     "dependencies": {
@@ -38,6 +39,7 @@
         "babel-eslint": "^10.0.1",
         "eslint": "^5.16.0",
         "eslint-plugin-vue": "^5.0.0",
+        "jest": "^26.0.1",
         "sass": "^1.17.4",
         "sass-loader": "^7.1.0",
         "vue-cli-plugin-vuetify": "^1.0.1",
@@ -53,7 +55,18 @@
             "plugin:vue/essential",
             "eslint:recommended"
         ],
-        "rules": {},
+        "rules": {
+            "no-console": "off",
+            "no-cond-assign": "warn",
+            "no-self-assign": "warn",
+            "no-empty": "warn",
+            "no-undef": "warn",
+            "getter-return": "warn",
+            "no-unused-vars": "warn",
+            "no-fallthrough": "warn",
+            "no-useless-call": "warn",
+            "no-useless-escape": "warn"
+        },
         "parserOptions": {
             "parser": "babel-eslint"
         }

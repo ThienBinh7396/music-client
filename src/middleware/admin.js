@@ -1,4 +1,4 @@
-export default function log({ next, to, router }) {
+export default function log({ next, to }) {
     let a = localStorage.getItem('_a');
     let atk = localStorage.getItem('_atk');
 

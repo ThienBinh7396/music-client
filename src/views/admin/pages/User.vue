@@ -108,7 +108,7 @@ export default {
                     }
                     this.loading = false;
                 })
-                .catch(err => {
+                .catch(() => {
                     this.showToast({
                         type: 'error',
                         text: 'Something went wrong'
@@ -118,7 +118,7 @@ export default {
 
         },
         getDate: function (date) {
-            return formatDate(date, 3).format
+            return window.formatDate(date, 3).format
         },
 
     }

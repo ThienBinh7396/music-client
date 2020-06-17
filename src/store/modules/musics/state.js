@@ -75,7 +75,6 @@ export default {
             }
         ],
         lastTime: 0,
-        duration: 0
     }
 
 

@@ -194,7 +194,6 @@ export default {
             },
             play: false,
             dialog: false,
-            search: '',
             loading: true,
             showMusic: {
                 active: 1,
@@ -222,7 +221,6 @@ export default {
     },
     watch: {
         play: function (val) {
-            console.log(val);
             if (val) {
                 this.$refs.music.play();
             } else {
@@ -234,10 +232,8 @@ export default {
 
     },
     created() {
-        console.log(this.axiosInstance);
         this.axiosInstance.post('admin/musics/all')
             .then(rs => {
-                console.log(rs);
                 this.loading = false;
                 this.musics = rs.data.response;
 
@@ -247,7 +243,7 @@ export default {
     methods: {
         ...mapMutations('app', ['showToast', 'showDialogProcess']),
         getDate: function (date) {
-            return formatDate(date, 3).format
+            return window.formatDate(date, 3).format
         },
         formatMusicTime: function (time) {
             let t = Number(`${time}`);
@@ -258,11 +254,10 @@ export default {
 
             let s = parseInt(((t % (60 * 60)) % 60));
 
-            return `${h != 0 ? `${h}:`  : ''}${m}:${formatNumber(s)}`;
+            return `${h != 0 ? `${h}:`  : ''}${m}:${window.formatNumber(s)}`;
 
         },
         switchStatus: function (item) {
-            console.log(item);
             try {
                 if (item.id != this.currentMusic.id) {
                     this.currentMusic.id = item.id;
@@ -270,29 +265,26 @@ export default {
 
                     let that = this;
 
-                    setTimeout(function (e) {
-
+                    setTimeout(function () {
                         that.$refs.music.load();
 
-                        console.log("Loaded")
                         that.play = true;
                         that.$refs.music.play()
                     }, 300)
-
                 } else {
                     this.play = !this.play;
                 }
-
-            } catch (err) {
-                console.log(err);
+            }catch{
+                this.showToast({
+                    type: 'error',
+                    text: 'Trying...'
+                })
             }
 
         },
         preview: function (item) {
             this.dialog = true;
-
             this.showMusic = item;
-            console.log(item);
             return;
 
         },
