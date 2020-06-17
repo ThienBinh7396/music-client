@@ -62,15 +62,6 @@ export default [{
                 meta: {
                     middleware: logClient
                 }
-            },
-            {
-                path: '/contact',
-                name: "Contact",
-                component: () =>
-                    import ('@/views/client/pages/Contact'),
-                meta: {
-                    middleware: logClient
-                }
             }
         ]
 

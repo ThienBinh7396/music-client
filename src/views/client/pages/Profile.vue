@@ -17,10 +17,10 @@
               />
             </div>
             <div class="greeting">{{tempUser.name}}</div>
-            <div
-              class="description text-center px-6"
-              v-if="tempUser.description"
-            >"{{tempUser.description }}"</div>
+            <div class="description text-center px-6" v-if="tempUser.description">
+              ❛
+              <span class="text---lessDarkColor">{{tempUser.description }}</span>❟
+            </div>
           </div>
         </v-card>
       </v-col>
@@ -139,9 +139,44 @@
             </v-row>
             <v-row>
               <v-col class="mt-6">
-                <v-btn color="#0b64bbe8" @click="update()">Update profile</v-btn>
+                <v-btn
+                  color="#0b64bbe8"
+                  :loading="isUpdating"
+                  @click="updateInformation()"
+                >Update profile</v-btn>
               </v-col>
             </v-row>
+          </form>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-card class="card-edit-info px-4 py-4">
+          <h3>Update Password</h3>
+          <form class="mt-4">
+            <v-text-field
+              v-model="userPassword.oldValue"
+              label="Old Password..."
+              class="theme--light mb-4"
+              :color="tempUser.color"
+              :type="userPassword.showOldPassword ? 'text': 'password'"
+              :rules="userPassword.rule"
+              :append-icon="userPassword.showOldPassword ? 'mdi-eye': 'mdi-eye-off'"
+              @click:append="userPassword.showOldPassword = !userPassword.showOldPassword"
+            />
+            <v-text-field
+              v-model="userPassword.value"
+              label="New Password..."
+              class="theme--light mb-4"
+              :color="tempUser.color"
+              :type="userPassword.showNewPassword ? 'text': 'password'"
+              :rules="[...userPassword.rule, 
+              v => (!!v && v !== userPassword.oldValue )|| `New password must be different from old password!`]"
+              :append-icon="userPassword.showNewPassword ? 'mdi-eye': 'mdi-eye-off'"
+              @click:append="userPassword.showNewPassword = !userPassword.showNewPassword"
+            />
+            <v-btn color="#dc6d0e" :loading="userPassword.isUpdating" @click="updatePassword">Change password</v-btn>
           </form>
         </v-card>
       </v-col>
@@ -150,7 +185,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 import { mask } from "vue-the-mask";
 
@@ -162,16 +197,21 @@ export default {
     return {
       menu: false,
       mask: "!#XXXXXXXX",
+      isUpdating: false,
       tempUser: {
         color: "#1976D2FF",
         banner: "/img/temp-banner-user.jpg",
         address: "",
         name: "",
-        description: "xxx",
-        email: ""
+        email: "",
+        description: "xxx"
       },
       userPassword: {
+        isUpdating: false,
         value: "",
+        showNewPassword: false,
+        oldValue: "",
+        showOldPassword: false,
         type: "password",
         rule: [
           v => !!v || "Password is required",
@@ -183,7 +223,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("app", ["user"]),
+    ...mapState("app", ["user", "axiosInstance"]),
     swatchStyle: function() {
       const { menu } = this;
       return {
@@ -204,10 +244,94 @@ export default {
     }
   },
   methods: {
+    ...mapMutations("app", ["showToast", "setUser"]),
+    updateInformation: function() {
+      if (this.isUpdating) return;
+
+      this.isUpdating = true;
+
+      this.axiosInstance
+        .post("/client/users/updateUser", {
+          id: this.user.id,
+          ...this.tempUser
+        })
+        .then(rs => {
+          let { type, response, message } = rs.data;
+          if (type === "success") {
+            this.setUser({
+              ...this.user,
+              name: response.name,
+              thumbnail: response.thumbnail
+            });
+            this.updateTempUser(response);
+          }
+
+          this.showToast({
+            type,
+            text: message
+          });
+          this.isUpdating = false;
+        })
+        .catch(() => {
+          this.showToast({
+            type: "error",
+            text: "Update information faild!"
+          });
+          this.isUpdating = false;
+        });
+    },
+    updatePassword: function() {
+      if (this.userPassword.isUpdating) return;
+
+      this.userPassword.isUpdating = true;
+
+      if (!this.userPassword.oldValue || !this.userPassword.value) {
+        this.showToast({
+          type: "error",
+          text: "Type password!"
+        });
+        return;
+      }
+      if (this.userPassword.oldValue === this.userPassword.value) {
+        this.showToast({
+          type: "error",
+          text: "New password must be different from old password!"
+        });
+        return;
+      }
+
+      this.axiosInstance.post("/client/users/updatePassword", {
+        oldPassword: this.userPassword.oldValue,
+        newPassword: this.userPassword.value
+      })
+      .then(rs => {
+        const {type, message} = rs.data;
+
+        if(type === 'success'){
+          this.userPassword.oldValue = ''
+          this.userPassword.value = ''
+        }
+
+        this.showToast({
+          type,
+          text: message
+        })
+
+        this.userPassword.isUpdating = false
+      })
+      .catch(() => {
+        this.showToast({
+          type: 'error',
+          text: 'Update password faild!'
+        })
+
+        this.userPassword.isUpdating = false
+      });
+    },
     updateTempUser: function(val) {
       if (val) {
-        Object.keys(val).forEach(it => {
-          this.tempUser[it] = val[it];
+        Object.keys(this.tempUser).forEach(key => {
+          if (val[key]) this.tempUser[key] = val[key];
         });
       }
     }

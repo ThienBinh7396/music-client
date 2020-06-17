@@ -172,7 +172,6 @@ export default {
                             } = res;
 
                             if (data.type == "success") {
-                                console.log(that.type);
                                 if (that.type == '') {
                                     localStorage.setItem('_u', data.response.u);
                                     localStorage.setItem('_t', data.response.token);
@@ -201,7 +200,6 @@ export default {
                                 type: 'error'
                             })
 
-                            console.log(err);
                         })
 
                 } else {

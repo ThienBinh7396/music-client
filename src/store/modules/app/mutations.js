@@ -1,6 +1,5 @@
 import {set, toggle } from '@/utils/vuex'
 import Swal from 'sweetalert2';
-import { setTimeout } from 'core-js';
 
 export default {
     showDialogProcess: set('dialogProcess'),
@@ -20,12 +19,10 @@ export default {
     setUser: set('user'),
     setAdminToken: set('adminToken'),
     setSocket: (state, socket) => {
-        console.log("Connect socket")
         if (state.socket) state.socket.close();
         state.socket = null;
         state.socket = socket.io;
 
-        console.log(socket);
         socket.io.emit('init', socket.init);
 
     },
@@ -66,7 +63,6 @@ export default {
 
         }
 
-        console.log("Width window: " + width + ", rs: " + rs);
         state.responsive = rs;
 
 
